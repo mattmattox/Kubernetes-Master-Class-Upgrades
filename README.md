@@ -165,3 +165,13 @@ Take a post-upgrade etcd snapshot
     kubernetes_version: "1.19.7-rancher1-1"
     ```
 - If you have an air-gapped setup, please see [documentation](https://rancher.com/docs/rke/latest/en/config-options/system-images/)
+
+## RKE Upgrade - Verify
+- Verify all nodes are Ready and at the new version
+    ```kubectl get nodes -o wide
+    ```
+- Verify all pods are Healthy
+    ```
+    kubectl get pods --all-namespaces -o wide | grep -v 'Running\|Completed’
+    ```
+    - All pods should be healthy; we're looking for Pods crashing or stuck.
