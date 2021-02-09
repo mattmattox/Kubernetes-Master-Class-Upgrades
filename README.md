@@ -303,7 +303,7 @@ INFO[0007] [certificates] Generating admin certificates and kubeconfig
 - Build a standard RKE cluster [Documentation](https://rancher.com/docs/rke/latest/en/installation/#deploying-kubernetes-with-rke)
 - Install Rancher using helm3
    ```
- 	 kubectl create namespace cattle-system
+   kubectl create namespace cattle-system
    helm upgrade --install rancher rancher-latest/rancher \
    --namespace cattle-system \
    --set hostname=rancher.example.com \
@@ -342,5 +342,5 @@ INFO[0007] [certificates] Generating admin certificates and kubeconfig
 - Upgrading Kubernetes
     - Edit cluster.yml
     - Comment out bad node. **NOTE** You should only remove one node at a time.
-    - Run an `rke up`
+    - Run a `rke up`
     - Delete the node from the cluster `kubectl delete node mmattox-lab-c-03`
