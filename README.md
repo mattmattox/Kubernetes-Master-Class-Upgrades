@@ -187,7 +187,7 @@ Take a post-upgrade etcd snapshot
 
 ### Missing `cluster.yaml` and `cluster.rkestate`
 
-#### Setting up lab environment
+#### Setting up a lab environment
 - Build a standard RKE cluster [Documentation](https://rancher.com/docs/rke/latest/en/installation/#deploying-kubernetes-with-rke)
 - Delete `cluster.rkestate`
 - Delete `kube_config_cluster.yml`
@@ -217,7 +217,7 @@ INFO[0007] [certificates] Generating admin certificates and kubeconfig
 
 ###  Upgrading from a old Helm version
 
-#### Setting up lab environment
+#### Setting up a lab environment
 - Build a standard RKE cluster [Documentation](https://rancher.com/docs/rke/latest/en/installation/#deploying-kubernetes-with-rke)
 - Setup [helm2](https://github.com/helm/helm/releases/tag/v2.17.0)
     ```
@@ -296,3 +296,5 @@ INFO[0007] [certificates] Generating admin certificates and kubeconfig
    --set ingress.tls.source=secret \
    --version 2.5.5
    ```
+
+###
