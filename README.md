@@ -182,4 +182,35 @@ Take a post-upgrade etcd snapshot
     rke etcd snapshot-restore --name pre-k8s-upgrade-..... --config ./cluster.yaml
     ```
     - [Documentation](https://rancher.com/docs/rke/latest/en/etcd-snapshots/restoring-from-backup/)
-    
+
+## Common issues
+
+### Missing `cluster.yaml` and `cluster.rkestate`
+
+#### Setting up lab environment
+- Build a standard RKE cluster [Documentation](https://rancher.com/docs/rke/latest/en/installation/#deploying-kubernetes-with-rke)
+- Delete `cluster.rkestate`
+- Delete `kube_config_cluster.yml`
+
+#### Reproducing the issue
+- `rke up`
+- You should see rke generating new certificates (See example output below)
+```
+INFO[0004] [certificates] Generating CA kubernetes certificates
+INFO[0005] [certificates] Generating Kubernetes API server aggregation layer requestheader client CA certificates
+INFO[0005] [certificates] GenerateServingCertificate is disabled, checking if there are unused kubelet certificates
+INFO[0005] [certificates] Generating Kubernetes API server certificates
+INFO[0006] [certificates] Generating Service account token key
+INFO[0006] [certificates] Generating Kube Controller certificates
+INFO[0006] [certificates] Generating Kube Scheduler certificates
+INFO[0006] [certificates] Generating Kube Proxy certificates
+INFO[0007] [certificates] Generating Node certificate
+INFO[0007] [certificates] Generating admin certificates and kubeconfig
+```
+
+#### Resolution
+
+- SSH to one of controlplane nodes
+- Run the [script](https://raw.githubusercontent.com/rancherlabs/support-tools/master/how-to-retrieve-kubeconfig-from-custom-cluster/rke-node-kubeconfig.sh) and follow the instructions given to get a kubeconfig file for the cluster.
+- Run the [script](https://raw.githubusercontent.com/rancherlabs/support-tools/master/how-to-retrieve-cluster-yaml-from-custom-cluster/cluster-yaml-recovery.sh) and follow the instructions given to get a cluster.yaml and cluster.rkestate file for the cluster.
+- Copy the files cluster.yml, cluster.rkestate, and kube_config_cluster.yml to safe location.
