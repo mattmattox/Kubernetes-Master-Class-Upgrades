@@ -213,4 +213,86 @@ INFO[0007] [certificates] Generating admin certificates and kubeconfig
 - SSH to one of controlplane nodes
 - Run the [script](https://raw.githubusercontent.com/rancherlabs/support-tools/master/how-to-retrieve-kubeconfig-from-custom-cluster/rke-node-kubeconfig.sh) and follow the instructions given to get a kubeconfig file for the cluster.
 - Run the [script](https://raw.githubusercontent.com/rancherlabs/support-tools/master/how-to-retrieve-cluster-yaml-from-custom-cluster/cluster-yaml-recovery.sh) and follow the instructions given to get a cluster.yaml and cluster.rkestate file for the cluster.
-- Copy the files cluster.yml, cluster.rkestate, and kube_config_cluster.yml to safe location.
+- Copy the files cluster.yml, cluster.rkestate, and kube_config_cluster.yml to a safe location.
+
+###  Upgrading from a old Helm version
+
+#### Setting up lab environment
+- Build a standard RKE cluster [Documentation](https://rancher.com/docs/rke/latest/en/installation/#deploying-kubernetes-with-rke)
+- Setup [helm2](https://github.com/helm/helm/releases/tag/v2.17.0)
+    ```
+    kubectl -n kube-system create serviceaccount tiller
+    kubectl create clusterrolebinding tiller --clusterrole cluster-admin --serviceaccount=kube-system:tiller
+    helm init --service-account tiller --wait
+    helm repo add rancher-latest https://releases.rancher.com/server-charts/latest
+
+    ```
+- Install Rancher using helm2
+    ```
+    helm install rancher-latest/rancher --name rancher \
+    --namespace cattle-system \
+    --set hostname=rancher.example.com \
+    --set ingress.tls.source=secret \
+    --version 2.3.10
+    ```
+
+#### Reproducing the issue
+- Setup [helm3](https://github.com/helm/helm/releases/tag/v3.5.0)
+    ```
+    helm repo add rancher-latest https://releases.rancher.com/server-charts/latest
+    helm repo update
+    ```
+- Try to upgrade Rancher
+    ```
+    helm upgrade --install rancher rancher-latest/rancher \
+    --namespace cattle-system \
+    --set hostname=rancher.example.com \
+    --set ingress.tls.source=secret \
+    --version 2.5.5
+    ```
+- Error message
+    ```
+    Release "rancher" does not exist. Installing it now.
+    Error: rendered manifests contain a resource that already exists. Unable to continue with install: ServiceAccount "rancher" in namespace "cattle-system" exists and cannot be imported into the current release: invalid ownership metadata; label validation error: missing key "app.kubernetes.io/managed-by": must be set to "Helm"; annotation validation error: missing key "meta.helm.sh/release-name": must be set to "rancher"; annotation validation error: missing key "meta.helm.sh/release-namespace": must be set to "cattle-system"
+    ```
+
+#### Resolution
+- Take an etcd snapshot
+    ```
+    rke etcd snapshot-save --config cluster.yaml --name helm2-helm3-`date '+%Y%m%d%H%M%S'`
+    ```
+- Update annotates and labels for Rancher objects
+   ```
+   kubectl annotate namespace cattle-system app.kubernetes.io/managed-by=helm
+   kubectl annotate namespace cattle-system meta.helm.sh/release-name=rancher
+   kubectl annotate namespace cattle-system meta.helm.sh/release-namespace=cattle-system
+   kubectl label namespace cattle-system app.kubernetes.io/managed-by=Helm
+   kubectl -n cattle-system annotate sa rancher app.kubernetes.io/managed-by=helm
+   kubectl -n cattle-system annotate sa rancher meta.helm.sh/release-name=rancher
+   kubectl -n cattle-system annotate sa rancher meta.helm.sh/release-namespace=cattle-system
+   kubectl -n cattle-system label --overwrite sa rancher app.kubernetes.io/managed-by=Helm
+   kubectl -n cattle-system annotate ClusterRoleBinding rancher app.kubernetes.io/managed-by=helm
+   kubectl -n cattle-system annotate ClusterRoleBinding rancher meta.helm.sh/release-name=rancher
+   kubectl -n cattle-system annotate ClusterRoleBinding rancher meta.helm.sh/release-namespace=cattle-system
+   kubectl -n cattle-system label --overwrite ClusterRoleBinding rancher app.kubernetes.io/managed-by=Helm
+   kubectl -n cattle-system annotate service rancher app.kubernetes.io/managed-by=helm
+   kubectl -n cattle-system annotate service rancher meta.helm.sh/release-name=rancher
+   kubectl -n cattle-system annotate service rancher meta.helm.sh/release-namespace=cattle-system
+   kubectl -n cattle-system label --overwrite service rancher app.kubernetes.io/managed-by=Helm   
+   kubectl -n cattle-system annotate Deployment rancher app.kubernetes.io/managed-by=helm
+   kubectl -n cattle-system annotate Deployment rancher meta.helm.sh/release-name=rancher
+   kubectl -n cattle-system annotate Deployment rancher meta.helm.sh/release-namespace=cattle-system
+   kubectl -n cattle-system label --overwrite Deployment rancher app.kubernetes.io/managed-by=Helm
+   kubectl -n cattle-system annotate Ingress rancher app.kubernetes.io/managed-by=helm
+   kubectl -n cattle-system annotate Ingress rancher meta.helm.sh/release-name=rancher
+   kubectl -n cattle-system annotate Ingress rancher meta.helm.sh/release-namespace=cattle-system
+   kubectl -n cattle-system label --overwrite Ingress rancher app.kubernetes.io/managed-by=Helm   
+   ```
+- Upgrade Rancher
+   ```
+   helm upgrade --install rancher rancher-latest/rancher \
+   --namespace cattle-system \
+   --set hostname=rancher.example.com \
+   --set ingress.tls.source=secret \
+   --version 2.5.5
+   ```
