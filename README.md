@@ -77,7 +77,7 @@ For example: when upgrading from v0.1.x -> v1.1.0 instead do v0.1.x -> v0.2.x ->
     ```
 - Take an etcd snapshot
     ```
-    rke etcd snapshot-save --config cluster.yml --name pre-rancher-upgrade-`date '+%Y%m%d%H%M%S'`
+    rke etcd snapshot-save --config cluster.yaml --name pre-rancher-upgrade-`date '+%Y%m%d%H%M%S'`
     ```    
 - Grab the current helm values using helm get values rancher -n cattle-system
     Example output:
@@ -128,13 +128,13 @@ For example: when upgrading from v0.1.x -> v1.1.0 instead do v0.1.x -> v0.2.x ->
     ```
 Take a post-upgrade etcd snapshot
     ```
-    rke etcd snapshot-save --config cluster.yml --name post-rancher-upgrade-`date '+%Y%m%d%H%M%S'`
+    rke etcd snapshot-save --config cluster.yaml --name post-rancher-upgrade-`date '+%Y%m%d%H%M%S'`
     ```
 
 ## Rancher Upgrade – Backout
 - You can not downgrade Rancher; you must do an etcd restore [Documentation](https://rancher.com/docs/rke/latest/en/etcd-snapshots/restoring-from-backup/)
     ```
-    rke etcd snapshot-restore --name pre-rancher-upgrade-..... --config ./cluster.yml
+    rke etcd snapshot-restore --name pre-rancher-upgrade-..... --config ./cluster.yaml
     ```
 
 ## RKE Upgrade – Prep work
@@ -154,3 +154,5 @@ Take a post-upgrade etcd snapshot
     rke config --list-version --all –print
     ```
     - You might need to upgrade to a newer RKE version if the recommend k8s version isn't available.
+
+## RKE Upgrade – Change
