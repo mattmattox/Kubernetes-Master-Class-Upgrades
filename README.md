@@ -4,7 +4,7 @@ Kubernetes Master Class: A Seamless Approach to Rancher &amp; Kubernetes Upgrade
 ## Terms
 - **Rancher Server** is a set of pods that run the main orchestration engine and UI for Rancher.
 - **RKE** (Rancher Kubernetes Engine) is the tool Rancher uses to create and manage Kubernetes clusters
-- **Local/upstream cluster** This is the cluster where the Rancher server is installed, this is usually an RKE built cluster)
+- **Local/upstream cluster** This is the cluster where the Rancher server is installed; this is usually an RKE built cluster)
 - **Downstream cluster(s)** are Kubernetes cluster that Rancher is managing
 
 ## High-Level rules
@@ -22,7 +22,7 @@ The following are the high-level rules for planning a Rancher/Kubernetes/Docker 
 Please see the following recommendations when planning version upgrades.
 - **Rancher**: perform one minor version jump at a time
 For example: when upgrading from v2.1.x -> v2.3.x. We encourage upgrading v2.1.x -> v2.2.x -> v2.3.x but this is not required.
-- **Kubernetes**: perform no more than 2 minor versions at a time, ideally avoid skipping minor versions entirely as this can increase the chances of an issue due to accumulated changes
+- **Kubernetes**: perform no more than two minor versions at a time, ideally avoid skipping minor versions entirely as this can increase the chances of an issue due to accumulated changes
 For example: when upgrading from v1.13.x -> v1.19.x we encourage upgrading v1.13.x -> v1.15.x -> v1.17.x -> v1.19.x
 - **RKE**: perform one major RKE versions jump at a time
 For example: when upgrading from v0.1.x -> v1.1.0 instead do v0.1.x -> v0.2.x -> v.0.3.x -> v1.0.x -> v1.1.x
@@ -35,7 +35,7 @@ For example: when upgrading from v0.1.x -> v1.1.0 instead do v0.1.x -> v0.2.x ->
 - **Kubernetes upgrade** - 60Mins for install which may be longer for larger clusters with 60Mins for troubleshooting/rollback
 
 ### Effect / Impact during the change window
-- **Rancher upgrade** - Only management of Rancher and downstream clusters are impacted, Applications shouldn't know that anything is being done. But any CI/CD pipelines should be paused
+- **Rancher upgrade** - Only management of Rancher and downstream clusters are impacted; applications shouldn't know that anything is being done. But any CI/CD pipelines should be paused.
 - **Kubernetes upgrade of the local cluster** - The Rancher UI should disconnect and reconnect after a few mins due to the ingress-controllers being restarted.
 - **Kubernetes upgrade of downstream clusters** - Applications might see a short network blip as ingress-controllers and networking is restarted. See [link](https://rancher.com/blog/2020/zero-downtime/) for more details
 
@@ -46,7 +46,7 @@ For example: when upgrading from v0.1.x -> v1.1.0 instead do v0.1.x -> v0.2.x ->
 
 ## Rancher Upgrade – Prep work
 - Check if the Rancher UI is accessible
-    - Check if all clusters in UI are in Active state
+    - Check if all clusters in UI are in an Active state
     - Check if all pods in kube-system and cattle-system namespaces are running in both the local and downstream clusters.
         ```
         kubectl get pods -n kube-system
@@ -58,8 +58,8 @@ For example: when upgrading from v0.1.x -> v1.1.0 instead do v0.1.x -> v0.2.x ->
         ls -l /opt/rke/etcd-snapshots
         docker logs etcd-rolling-snapshots
         ```
-    - **k3s**: if Rancher is deployed on a k3s Kubernetes cluster, ensure scheduled backups are configured and working. Please see the k3s [documentation](https://rancher.com/docs/k3s/latest/en/) pages for further information on this.
-- Create a one-time datastore snapshot, please see the following documentation for RKE and k3s, and the single node Docker install options for more information
+    - **k3s**: if Rancher is deployed on a k3s Kubernetes cluster, ensure scheduled backups are configured and working. Please see the k3s [Documentation](https://rancher.com/docs/k3s/latest/en/) pages for further information on this.
+- Create a one-time datastore snapshot; please see the following Documentation for RKE and k3s and the single node Docker install options for more information
     - **RKE**: check for expired/expiring Kubernetes certs
         ```
         for i in $(ls /etc/kubernetes/ssl/*.pem|grep -v key); do echo -n $i" "; openssl x509 -startdate -enddate -noout -in $i | grep 'notAfter='; done
@@ -106,7 +106,7 @@ For example: when upgrading from v0.1.x -> v1.1.0 instead do v0.1.x -> v0.2.x ->
     ```
     kubectl -n cattle-system rollout status deploy/rancher
     ```
-- Official Rancher upgrade [documentation](https://rancher.com/docs/rancher/v2.x/en/installation/install-rancher-on-k8s/upgrades/)
+- Official Rancher upgrade [Documentation](https://rancher.com/docs/rancher/v2.x/en/installation/install-rancher-on-k8s/upgrades/)
 
 ## Rancher Upgrade – Verify
 - Check if the Rancher UI is accessible
@@ -164,7 +164,7 @@ Take a post-upgrade etcd snapshot
     ```
     kubernetes_version: "1.19.7-rancher1-1"
     ```
-- If you have an air-gapped setup, please see [documentation](https://rancher.com/docs/rke/latest/en/config-options/system-images/)
+- If you have an air-gapped setup, please see [Documentation](https://rancher.com/docs/rke/latest/en/config-options/system-images/)
 
 ## RKE Upgrade - Verify
 - Verify all nodes are Ready and at the new version
@@ -215,7 +215,7 @@ INFO[0007] [certificates] Generating admin certificates and kubeconfig
 - Run the [script](https://raw.githubusercontent.com/rancherlabs/support-tools/master/how-to-retrieve-cluster-yaml-from-custom-cluster/cluster-yaml-recovery.sh) and follow the instructions given to get a cluster.yaml and cluster.rkestate file for the cluster.
 - Copy the files cluster.yml, cluster.rkestate, and kube_config_cluster.yml to a safe location.
 
-###  Upgrading from a old Helm version
+###  Upgrading from an old Helm version
 
 #### Setting up a lab environment
 - Build a standard RKE cluster [Documentation](https://rancher.com/docs/rke/latest/en/installation/#deploying-kubernetes-with-rke)
@@ -297,4 +297,50 @@ INFO[0007] [certificates] Generating admin certificates and kubeconfig
    --version 2.5.5
    ```
 
-###
+###  Upgrading with a broken node
+
+#### Setting up a lab environment
+- Build a standard RKE cluster [Documentation](https://rancher.com/docs/rke/latest/en/installation/#deploying-kubernetes-with-rke)
+- Install Rancher using helm3
+   ```
+ 	 kubectl create namespace cattle-system
+   helm upgrade --install rancher rancher-latest/rancher \
+   --namespace cattle-system \
+   --set hostname=rancher.example.com \
+   --set ingress.tls.source=secret \
+   --set antiAffinity=required \
+   --version 2.5.5
+   ```
+
+#### Reproducing the issue
+- `systemctl stop docker` one of the nodes in the cluster
+- Error message
+   ```
+   NAME               STATUS     ROLES                      AGE     VERSION
+   mmattox-lab-c-01   Ready      controlplane,etcd,worker   9m22s   v1.19.7
+   mmattox-lab-c-02   Ready      controlplane,etcd,worker   9m22s   v1.19.7
+   mmattox-lab-c-03   NotReady   controlplane,etcd,worker   9m22s   v1.19.7
+   ```
+- `kubectl get pods -n cattle-system -o wide | grep -ve 'Running\|Completed'`
+   ```
+   NAME                              READY   STATUS      RESTARTS   AGE     IP           NODE               NOMINATED NODE   READINESS GATES
+   rancher-7df6ff577b-nqjfv          0/1     Pending     0          2m11s   <none>       <none>             <none>           <none>
+   ```
+
+#### Resolution
+**NOTE** This should only be done if the node is unrecoverable, and a replacement should be added to the cluster ASAP.
+- Upgrading Rancher
+   - Change replicas to 2 for Rancher deployment
+       ```
+       helm upgrade --install rancher rancher-latest/rancher \
+       --namespace cattle-system \
+       --set hostname=rancher.example.com \
+       --set ingress.tls.source=secret \
+       --set replicas=2
+       --version 2.5.5
+       ```
+- Upgrading Kubernetes
+    - Edit cluster.yml
+    - Comment out bad node. **NOTE** You should only remove one node at a time.
+    - Run an `rke up`
+    - Delete the node from the cluster `kubectl delete node mmattox-lab-c-03`
