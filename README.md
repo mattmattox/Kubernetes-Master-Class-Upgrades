@@ -343,4 +343,5 @@ INFO[0007] [certificates] Generating admin certificates and kubeconfig
     - Edit cluster.yml
     - Comment out bad node. **NOTE** You should only remove one node at a time.
     - Run a `rke up`
-    - Delete the node from the cluster `kubectl delete node mmattox-lab-c-03`
+    - Delete the node from the cluster if RKE left to behind
+        `kubectl delete node mmattox-lab-c-03`
