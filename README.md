@@ -175,3 +175,11 @@ Take a post-upgrade etcd snapshot
     kubectl get pods --all-namespaces -o wide | grep -v 'Running\|Completed’
     ```
     - All pods should be healthy; we're looking for Pods crashing or stuck.
+
+## RKE Upgrade – Backout
+- You can not downgrade Rancher; **you must do an etcd restore**
+    ```
+    rke etcd snapshot-restore --name pre-k8s-upgrade-..... --config ./cluster.yaml
+    ```
+    - [Documentation](https://rancher.com/docs/rke/latest/en/etcd-snapshots/restoring-from-backup/)
+    
