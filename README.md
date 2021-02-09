@@ -136,3 +136,21 @@ Take a post-upgrade etcd snapshot
     ```
     rke etcd snapshot-restore --name pre-rancher-upgrade-..... --config ./cluster.yml
     ```
+
+## RKE Upgrade – Prep work
+- Verify the correct `cluster.yaml` and `cluster.rkestate` file
+- Verify SSH access to all nodes in the cluster
+- Verify all nodes are Ready
+    ```
+    kubectl get nodes -o wide
+    ```
+- Verify all pods are Healthy
+    ```
+    kubectl get pods --all-namespaces -o wide | grep -v 'Running\|Completed'
+    ```
+    - We're looking for Pods crashing or stuck.
+- Verify Kubernetes version is available in RKE
+    ```
+    rke config --list-version --all –print
+    ```
+    - You might need to upgrade to a newer RKE version if the recommend k8s version isn't available.
