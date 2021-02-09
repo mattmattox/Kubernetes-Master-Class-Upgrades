@@ -156,3 +156,12 @@ Take a post-upgrade etcd snapshot
     - You might need to upgrade to a newer RKE version if the recommend k8s version isn't available.
 
 ## RKE Upgrade – Change
+- Take an etcd snapshot
+    ```
+    rke etcd snapshot-save --config cluster.yaml --name pre-k8s-upgrade-`date '+%Y%m%d%H%M%S'`
+    ```
+- Change `kubernetes_version` in the `cluster.yaml`
+    ```
+    kubernetes_version: "1.19.7-rancher1-1"
+    ```
+- If you have an air-gapped setup, please see [documentation](https://rancher.com/docs/rke/latest/en/config-options/system-images/)
