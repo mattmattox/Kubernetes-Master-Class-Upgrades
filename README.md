@@ -263,30 +263,30 @@ INFO[0007] [certificates] Generating admin certificates and kubeconfig
     ```
 - Update annotates and labels for Rancher objects
    ```
-   kubectl annotate namespace cattle-system app.kubernetes.io/managed-by=helm
-   kubectl annotate namespace cattle-system meta.helm.sh/release-name=rancher
-   kubectl annotate namespace cattle-system meta.helm.sh/release-namespace=cattle-system
-   kubectl label namespace cattle-system app.kubernetes.io/managed-by=Helm
-   kubectl -n cattle-system annotate sa rancher app.kubernetes.io/managed-by=helm
-   kubectl -n cattle-system annotate sa rancher meta.helm.sh/release-name=rancher
-   kubectl -n cattle-system annotate sa rancher meta.helm.sh/release-namespace=cattle-system
+   kubectl annotate --overwrite namespace cattle-system app.kubernetes.io/managed-by=helm
+   kubectl annotate --overwrite namespace cattle-system meta.helm.sh/release-name=rancher
+   kubectl annotate --overwrite namespace cattle-system meta.helm.sh/release-namespace=cattle-system
+   kubectl label --overwrite namespace cattle-system app.kubernetes.io/managed-by=Helm
+   kubectl -n cattle-system annotate --overwrite sa rancher app.kubernetes.io/managed=helm
+   kubectl -n cattle-system annotate --overwrite sa rancher meta.helm.sh/release-name=rancher
+   kubectl -n cattle-system annotate --overwrite sa rancher meta.helm.sh/release-namespace=cattle-system
    kubectl -n cattle-system label --overwrite sa rancher app.kubernetes.io/managed-by=Helm
-   kubectl -n cattle-system annotate ClusterRoleBinding rancher app.kubernetes.io/managed-by=helm
-   kubectl -n cattle-system annotate ClusterRoleBinding rancher meta.helm.sh/release-name=rancher
-   kubectl -n cattle-system annotate ClusterRoleBinding rancher meta.helm.sh/release-namespace=cattle-system
+   kubectl -n cattle-system annotate --overwrite ClusterRoleBinding rancher app.kubetes.io/managed-by=helm
+   kubectl -n cattle-system annotate --overwrite ClusterRoleBinding rancher meta.helm.sh/release-name=rancher
+   kubectl -n cattle-system annotate --overwrite ClusterRoleBinding rancher meta.helm.sh/release-namespace=cattle-system
    kubectl -n cattle-system label --overwrite ClusterRoleBinding rancher app.kubernetes.io/managed-by=Helm
-   kubectl -n cattle-system annotate service rancher app.kubernetes.io/managed-by=helm
-   kubectl -n cattle-system annotate service rancher meta.helm.sh/release-name=rancher
-   kubectl -n cattle-system annotate service rancher meta.helm.sh/release-namespace=cattle-system
+   kubectl -n cattle-system annotate --overwrite service rancher app.kubernetes.ianaged-by=helm
+   kubectl -n cattle-system annotate --overwrite service rancher meta.helm.sh/release-name=rancher
+   kubectl -n cattle-system annotate --overwrite service rancher meta.helm.sh/release-namespace=cattle-system
    kubectl -n cattle-system label --overwrite service rancher app.kubernetes.io/managed-by=Helm   
-   kubectl -n cattle-system annotate Deployment rancher app.kubernetes.io/managed-by=helm
-   kubectl -n cattle-system annotate Deployment rancher meta.helm.sh/release-name=rancher
-   kubectl -n cattle-system annotate Deployment rancher meta.helm.sh/release-namespace=cattle-system
+   kubectl -n cattle-system annotate --overwrite Deployment rancher app.kuberne.io/managed-by=helm
+   kubectl -n cattle-system annotate --overwrite Deployment rancher meta.helm.sh/release-name=rancher
+   kubectl -n cattle-system annotate --overwrite Deployment rancher meta.helm.sh/release-namespace=cattle-system
    kubectl -n cattle-system label --overwrite Deployment rancher app.kubernetes.io/managed-by=Helm
-   kubectl -n cattle-system annotate Ingress rancher app.kubernetes.io/managed-by=helm
-   kubectl -n cattle-system annotate Ingress rancher meta.helm.sh/release-name=rancher
-   kubectl -n cattle-system annotate Ingress rancher meta.helm.sh/release-namespace=cattle-system
-   kubectl -n cattle-system label --overwrite Ingress rancher app.kubernetes.io/managed-by=Helm   
+   kubectl -n cattle-system annotate --overwrite Ingress rancher app.kubernetio/managed-by=helm
+   kubectl -n cattle-system annotate --overwrite Ingress rancher meta.helm.sh/release-name=rancher
+   kubectl -n cattle-system annotate --overwrite Ingress rancher meta.helm.sh/release-namespace=cattle-system
+   kubectl -n cattle-system label --overwrite Ingress rancher app.kubernetes.io/managed-by=Helm
    ```
 - Upgrade Rancher
    ```
