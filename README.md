@@ -1,6 +1,8 @@
 # Kubernetes-Master-Class-Upgrades
 Kubernetes Master Class: A Seamless Approach to Rancher &amp; Kubernetes Upgrades
 
+## [YouTube video](https://www.youtube.com/watch?v=d8kS8y8cLq4)
+
 ## Terms
 - **Rancher Server** is a set of pods that run the main orchestration engine and UI for Rancher.
 - **RKE** (Rancher Kubernetes Engine) is the tool Rancher uses to create and manage Kubernetes clusters
