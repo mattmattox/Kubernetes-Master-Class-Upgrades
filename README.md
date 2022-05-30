@@ -177,6 +177,10 @@ Take a post-upgrade etcd snapshot
     kubectl get pods --all-namespaces -o wide | grep -v 'Running\|Completed’
     ```
     - All pods should be healthy; we're looking for Pods crashing or stuck.
+- If you are using [fleet](https://fleet.rancher.io/), verify the bundles you expect are there an in status `READY`
+    ```
+    kubectl get bundle -n fleet-default --context local
+    ```
 
 ## RKE Upgrade – Backout
 - You can not downgrade Rancher; **you must do an etcd restore**
